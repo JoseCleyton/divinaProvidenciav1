@@ -1,0 +1,103 @@
+<div id="wrapper">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion collapse btn" id="accordionSidebar">
+
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" routerLink="home">
+            <div class="sidebar-brand-icon ">
+                <img src="../../assets/img/Logo-Divina-Providencia.ico" style="max-width: 70px; max-height: 70px">
+            </div>
+
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/painelDeControle">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span></a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pedidos" aria-expanded="true"
+                aria-controls="pedidos">
+                <i class="fas fa-paste"></i>
+                <span>Pedidos</span>
+            </a>
+            <div id="pedidos" class="collapse" aria-labelledby="pedidos" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="inserirPedido">Inserir Pedido</a>
+                    <a class="collapse-item" routerLink="listarPedidosAbertos">Listar Pedidos Abertos</a>
+                    <a class="collapse-item" routerLink="listarTodosPedidos">Listar Todos Pedidos</a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" data-target="#produtos" aria-expanded="true"
+                aria-controls="produtos">
+                <i class="fas fa-database"></i>
+                <span>Produtos</span>
+            </a>
+            <div id="produtos" class="collapse" aria-labelledby="produtos" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="inserirProduto">Inserir Produto</a>
+                    <a class="collapse-item" routerLink="listarEstoque">Listar todo Estoque</a>
+                </div>
+            </div>
+        </li>
+        <hr class="sidebar-divider">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#caixa" aria-expanded="true"
+                aria-controls="caixa">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Caixa</span>
+            </a>
+            <div id="caixa" class="collapse" aria-labelledby="caixa" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="movimentacoesDoCaixa">Movimentações</a>
+                </div>
+            </div>
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" routerLink="manualDoUsuario" data-toggle="collapse">
+                <i class="fas fa-book"></i>
+                <span>Manual do Usuário</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" data-toggle="collapse" data-target="#accordionSidebar"
+                id="sidebarToggle">
+            </button>
+        </div>
+
+    </ul>
+
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <app-topo></app-topo>
+
+            <router-outlet></router-outlet>
+        </div>
+        <app-rodape></app-rodape>
+    </div>
+</div>

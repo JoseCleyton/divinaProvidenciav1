@@ -1,0 +1,250 @@
+<!-- Page Heading -->
+<div class="container-fluid">
+
+  <div *ngIf="abrirCard" class="container"
+    style="position: absolute; z-index: 999; margin-left: 15%; max-width: 900px; top: 20%;">
+
+    <mat-card class="shadow-lg">
+      <div>
+        <i class="fas fa-exclamation" style="display: inline;"></i>
+        <h5 style="display: inline;margin-left: 30px; ">Você tem contas a Receber...</h5>
+        <button (click)="fecharCard()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="far fa-times-circle"></i>
+        </button>
+      </div>
+
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let account of accountsReceivable">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Nome do Cliente
+            </mat-panel-title>
+            <mat-panel-description>
+              Valor
+            </mat-panel-description>
+            <mat-panel-description>
+              Parcelas Pagas
+            </mat-panel-description>
+            <mat-panel-description>
+              Ação
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p style="display: inline;margin-left: 15px;">
+            <strong>{{ account.order.client }}</strong>
+          </p>
+          <p style="display: inline; margin-left: 15%;">
+            <strong>{{ account.order.orderValue | currency :'BRL':true }}</strong>
+          </p>
+          <p style="display: inline; margin-left: 20%;">
+            <strong>{{ account.paidInstallments }}</strong>
+          </p>
+          <p style="display: inline; margin-left: 10%;">
+            <button class="btn btn-primary" data-target=".bd-finalizarContaAReceber-modal-xl" data-toggle="modal"
+              (click)="receberValor(account.id)">Receber Valor</button>
+          </p>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card>
+  </div>
+
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Painel de Controle</h1>
+  </div>
+  <!-- Content Row -->
+  <div class="row">
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-12">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="font-weight-bold text-primary text-uppercase mb-1 text-center">Pedidos Totais</div>
+              <div class="text-xs font-weight-bold text-primary text-lowercase mb-1">Total de Pedidos Efetuados</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800 d-flex justify-content-center">
+                <mat-progress-spinner class="offset-md-5" *ngIf="load" mode="indeterminate"> </mat-progress-spinner>
+                <div *ngIf="!load">
+                  {{ pedidosTotais }}
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-book-open fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+
+    <div class="col-xl-3 col-md-6 mb-12">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="font-weight-bold text-primary text-uppercase mb-1 text-center">Caixa</div>
+              <div class="text-xs font-weight-bold text-primary text-lowercase mb-1">Valor do Caixa</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800 d-flex justify-content-center">
+                <mat-progress-spinner class="offset-md-5" *ngIf="load" mode="indeterminate"> </mat-progress-spinner>
+                <div *ngIf="!load">
+                  {{ valorCaixa | currency :'BRL':true }}
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-12">
+      <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="font-weight-bold text-primary text-uppercase mb-1 text-center">Pedidos Ativos</div>
+              <div class="text-xs font-weight-bold text-primary text-lowercase mb-1">Total de Pedidos Ativos</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800 d-flex justify-content-center">
+                <mat-progress-spinner class="offset-md-5" *ngIf="load" mode="indeterminate"> </mat-progress-spinner>
+                <div *ngIf="!load">
+                  {{ pedidosAtivos }}
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-paste fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-12">
+      <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="font-weight-bold text-primary text-uppercase mb-1 text-center">Produtos</div>
+              <div class="text-xs font-weight-bold text-primary text-lowercase mb-1">Total de Produtos no Estoque</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800 d-flex justify-content-center">
+                <mat-progress-spinner class="offset-md-5" *ngIf="load" mode="indeterminate"> </mat-progress-spinner>
+                <div *ngIf="!load">
+                  {{ produtosTotais }}
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-database fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="padding: 10px; width: 100%;">
+
+      <div class="col-xl-6 col-md-12 mb-12" style="float: left;">
+        <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <mat-progress-spinner class="offset-md-5" *ngIf="load" mode="indeterminate"> </mat-progress-spinner>
+                <canvas *ngIf="mostrarGrafico" baseChart [datasets]="lineChartData2" [labels]="lineChartLabels2"
+                  [colors]="lineChartColors2" [legend]="lineChartLegend2" [chartType]="lineChartType2"
+                  [plugins]="lineChartPlugins">
+                </canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-6 col-md-12 mb-12" style="float: right;">
+        <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <mat-progress-spinner class="offset-md-5" *ngIf="load" mode="indeterminate"> </mat-progress-spinner>
+                <canvas *ngIf="mostrarGrafico" baseChart [datasets]="lineChartData" [labels]="lineChartLabels"
+                  [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
+                  [plugins]="lineChartPlugins">
+                </canvas>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Receber Parcela  -->
+<div *ngIf="accountFinish != null" class="modal fade bd-finalizarContaAReceber-modal-xl" tabindex="-1" role="dialog"
+  aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <mat-progress-bar *ngIf="carregamento" mode="indeterminate"></mat-progress-bar>
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalScrollableTitle">Finalizar Conta</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col" style="text-align: center">Nome</th>
+              <th scope="col" style="text-align: center">Valor do Pedido</th>
+              <th scope="col" style="text-align: center">Total de Parcelas</th>
+              <th scope="col" style="text-align: center">Parcelas Pagas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td scope="row" style="text-align: center">{{ accountFinish.order.client }}</td>
+              <td scope="row" style="text-align: center">{{ accountFinish.order.orderValue | currency :'BRL':true }}
+              </td>
+              <td scope="row" style="text-align: center">{{ accountFinish.numberInstallments }}</td>
+              <td scope="row" style="text-align: center">{{ accountFinish.paidInstallments }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <button type="submit" (click)="finalizarContaAReceber()" data-toggle="modal" data-target=".bd-status-modal-xl"
+          data-dismiss="modal" class="btn btn-primary">Receber Parcela</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Status -->
+<div class="modal fade bd-status-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <mat-progress-bar *ngIf="carregamento" mode="indeterminate"></mat-progress-bar>
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalScrollableTitle">Status da Operação</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ mensagem }}
+      </div>
+      <div class="col-12 modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="limparMensagem()" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>

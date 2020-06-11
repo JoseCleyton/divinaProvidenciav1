@@ -1,0 +1,144 @@
+<div class="container-fluid">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h6 class="h6 mb-0 text-gray-800"><a routerLink="/painelDeControle">Painel de Controle</a> -> <strong>Inserir
+        Pedido</strong></h6>
+  </div>
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Estoque</h1>
+  </div>
+  <div class="offset-md-1 d-sm-flex align-items-center justify-content-between mb-4">
+    <div class="offset-md-2 col btn-group" matTooltip="Clique para exibir o campo de pesquisa">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Pesquisar por Produto
+            </mat-panel-title>
+            <mat-panel-description>
+              Nome do Produto
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field color="warn">
+            <mat-label>Nome do Produto</mat-label>
+            <input #nomeProduto matInput placeholder="Nome do Produto" (keyup)="pesquisaNomeProduto(nomeProduto.value)">
+            <mat-icon matSuffix><i class="fas fa-database"></i></mat-icon>
+          </mat-form-field>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top: 30px">
+
+    <mat-progress-bar *ngIf="carregamentoPagina" mode="indeterminate"></mat-progress-bar>
+    <div class="table-responsive">
+
+      <table class="table table-striped">
+
+        <thead>
+          <tr>
+            <th scope="col" style="text-align: center">#</th>
+            <th scope="col" style="text-align: center">Nome</th>
+            <th scope="col" style="text-align: center">Valor Unitário</th>
+            <th scope="col" style="text-align: center">Quantidade</th>
+            <th scope="col" style="text-align: center">Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of products | paginate: { itemsPerPage: 5, currentPage: pag }">
+            <td scope="row" style="text-align: center">{{ product.id | idConverter }}</td>
+            <td scope="row" style="text-align: center">{{ product.name }}</td>
+            <td scope="row" style="text-align: center">{{ product.unitaryValue | currency :'BRL':true }}</td>
+            <td scope="row" style="text-align: center">{{ product.quantityInStock }}</td>
+            <button data-toggle="modal" (click)="visualizarProduto(product.id)"
+              data-target=".bd-visualizarProduto-modal-xl" class="btn btn-warning" style="margin-left: 5px">
+              <i class="fas fa-pen"></i>
+            </button>
+          </tr>
+
+        </tbody>
+      </table>
+      <div class="text-right">
+        <pagination-controls (pageChange)="pag= $event" previousLabel="Anterior" nextLabel="Próximo">
+        </pagination-controls>
+      </div>
+      <h1 style="text-align: center" class="h3 mb-0 text-gray-800">{{ mensagemCarregamento }}</h1>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar produto-->
+<div *ngIf="produtoVisualizar !== null && produtoVisualizar != undefined"
+  class="modal fade bd-visualizarProduto-modal-xl" id="exampleModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Editar Produto</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="container" [formGroup]="formularioAtualizarProduto">
+          <div class="row">
+
+            <div class="col" style="margin: 15px">
+              <mat-form-field class="example-full-width">
+                <mat-label>Nome do Produto</mat-label>
+                <input type="text" matInput placeholder="Ex. Toalha" formControlName="nomeProduto"
+                  value="{{ produtoVisualizar.name}}">
+              </mat-form-field>
+            </div>
+
+            <div class="col" style="margin: 15px;">
+              <mat-form-field class="example-full-width">
+                <mat-label>Quantidade</mat-label>
+                <input type="text" matInput placeholder="Ex. 100" formControlName="quantidade"
+                  value="{{ produtoVisualizar.quantityInStock }}">
+              </mat-form-field>
+            </div>
+            <div class="col" style="margin: 15px;">
+              <mat-form-field class="example-full-width">
+                <mat-label>Valor Unitário</mat-label>
+                <input type="text" matInput placeholder="Ex. 50" formControlName="valorUnitario"
+                  value="{{ produtoVisualizar.unitaryValue }}">
+              </mat-form-field>
+            </div>
+
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <button type="submit" (click)="atualizarProduto()" data-toggle="modal" data-target=".bd-status-modal-xl"
+          data-dismiss="modal" class="btn btn-primary" [disabled]="!formularioAtualizarProduto">Atualizar
+          Produto</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Status -->
+<div class="modal fade bd-status-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <mat-progress-bar *ngIf="carregamento" mode="indeterminate"></mat-progress-bar>
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalScrollableTitle">Status da Operação</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ mensagem }}
+      </div>
+      <div class="col-12 modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="limparMensagem()" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>

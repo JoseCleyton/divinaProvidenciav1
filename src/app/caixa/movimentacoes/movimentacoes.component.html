@@ -1,0 +1,159 @@
+<div class="container-fluid">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h6 class="h6 mb-0 text-gray-800"><a routerLink="/painelDeControle">Painel de Controle</a> -> <strong>Inserir Pedido</strong></h6>
+    <button (click)="dicas()" class="btn btn-lg fas fa-question-circle"
+      style="margin-left: 69.5%; color: blue;"></button>
+  </div>
+
+  <div *ngIf="painelDicas" class="alert alert-warning" role="alert">
+    <i class="fas fa-question-circle"></i> <button type="button" class="close" data-dismiss="alert" (click)="dicas()"
+      aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    Preencha o formulário para realizar retiradas no caixa
+  </div>
+
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h3 class="h3 mb-0 text-gray-800">Movimentações do Caixa</h3>
+  </div>
+  <form [formGroup]="formularioRetirarValorDoCaixa" (ngSubmit)="retirarValorDoCaixa()">
+    <div class="row">
+
+      <div class="offset-md-2 d-sm-flex align-items-center justify-content-between mb-4">
+        <div class="col btn-group" matTooltip="Digite a descrição da retirada">
+          <mat-form-field class="example-full-width">
+            <mat-label>Descrição</mat-label>
+            <input type="text" matInput placeholder="Ex. Comprar Material" formControlName="descricaoRetirada">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="offset-md-1 d-sm-flex align-items-center justify-content-between mb-4">
+        <div class="col btn-group" matTooltip="Digite o valor que deseja retirar">
+          <mat-form-field class="example-full-width">
+            <mat-label> <span>R$ </span>Valor</mat-label>
+            <input type="number" matInput placeholder="Ex. 50" formControlName="valorRetirada">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="col-xl-2 col-md-4 mb-12" style="margin-top: 5px">
+        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target=".bd-confirmarRetirada-modal-xl"
+          [disabled]="!formularioRetirarValorDoCaixa.valid">
+          Retirar
+        </button>
+      </div>
+
+    </div>
+  </form>
+  <div class="row">
+    <mat-progress-bar *ngIf="carregamentoPagina" mode="indeterminate"></mat-progress-bar>
+    <div class="table-responsive">
+
+      <table class="table table-striped">
+
+        <thead>
+          <tr>
+            <th scope="col" style="text-align: center">#</th>
+            <th scope="col" style="text-align: center">Descrição</th>
+            <th scope="col" style="text-align: center">Tipo</th>
+            <th scope="col" style="text-align: center">Data</th>
+            <th scope="col" style="text-align: center">valor</th>
+            <th scope="col" style="text-align: center">Valor Antigo Caixa</th>
+
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr *ngFor="let movimentacao of movimentacoesCaixa | paginate: { itemsPerPage: 7, currentPage: pag }">
+            <td scope="row" style="text-align: center">{{ movimentacao.id | idConverter }}</td>
+            <td scope="row" style="text-align: center">{{ movimentacao.comments }}</td>
+            <td scope="row" style="text-align: center">{{ movimentacao.reportType }}</td>
+            <td scope="row" style="text-align: center">{{ movimentacao.date }}</td>
+            <td scope="row" style="text-align: center">
+              {{ movimentacao.value }}
+              <div *ngIf="movimentacao.tipoMovimentacao === 'inserir'" class="progress progress-sm mr-2">
+                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%"
+                  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <div *ngIf="movimentacao.tipoMovimentacao === 'retirada'" class="progress progress-sm mr-2">
+                <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 100%"
+                  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </td>
+            <td scope="row" style="text-align: center">{{ movimentacao.oldValueCashier }}</td>
+
+          </tr>
+        </tbody>
+      </table>
+      <div class="text-right">
+        <pagination-controls (pageChange)="pag= $event" previousLabel="Anterior" nextLabel="Próximo">
+        </pagination-controls>
+      </div>
+      <h1 style="text-align: center" class="h3 mb-0 text-gray-800">{{ mensagemCarregamento }}</h1>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Retirada -->
+<div class="modal fade bd-confirmarRetirada-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <mat-progress-bar *ngIf="carregamentoPagina" mode="indeterminate"></mat-progress-bar>
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalScrollableTitle">Confirmar Retirada</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5 class="modal-title" id="exampleModalScrollableTitle">Valor a ser Retirado do Caixa</h5>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col" style="text-align: center">Observações</th>
+                <th scope="col" style="text-align: center">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="row" style="text-align: center">{{ descricaoRetirada }}</td>
+                <td scope="row" style="text-align: center">{{ valorRetirada | currency :'BRL':true }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div class="col-12 modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="limparMensagem()" data-dismiss="modal">Fechar</button>
+        <button type="submit" (click)="efetivarRetirada()" data-toggle="modal" data-target=".bd-status-modal-xl"
+          data-dismiss="modal" class="btn btn-primary">Efetivar Retirada</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Status -->
+<div class="modal fade bd-status-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <mat-progress-bar *ngIf="carregamento" mode="indeterminate"></mat-progress-bar>
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalScrollableTitle">Status da Operação</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ mensagem }}
+      </div>
+      <div class="col-12 modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="limparMensagem()" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
