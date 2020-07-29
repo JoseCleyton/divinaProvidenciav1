@@ -4,7 +4,7 @@
       <div class="card o-hidden border-0 shadow-lg my-5">
         <div class="card-body p-0">
           <div class="row">
-            <mat-progress-bar *ngIf="carregamentoPagina" mode="indeterminate"></mat-progress-bar>
+            <mat-progress-bar *ngIf="loadingPage" mode="indeterminate"></mat-progress-bar>
             <div class="col-lg-6 d-none d-lg-block bg-login">
               <img id="img" src="../../assets//img/Logo-Divina-Providencia.ico"
                 style="margin-left: 30%; margin-top: 15%">
@@ -14,20 +14,20 @@
                 <div class="text-center">
                   <h1 class="h4 text-gray-900 mb-4">Olá, bem vindo de volta :)</h1>
                 </div>
-                <form [formGroup]="formularioLogin" (ngSubmit)="autenticar()" class="user">
+                <form [formGroup]="formLogin" (ngSubmit)="authenticate()" class="user">
                   <div class="form-group">
                     <input type="email" class="form-control form-control-user" id="email" aria-describedby="emailHelp"
                       placeholder="Login..." formControlName="login">
                   </div>
                   <div class="form-group">
                     <input type="password" class="form-control form-control-user" id="senha" placeholder="Senha..."
-                      formControlName="senha">
+                      formControlName="password">
                   </div>
 
                   <div class="form-group">
-                    <p style="color: red">{{erroLogin}}</p>
+                    <p style="color: red">{{ errorLogin }}</p>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-user btn-block" [disabled]="!formularioLogin.valid">
+                  <button type="submit" class="btn btn-primary btn-user btn-block" [disabled]="!formLogin.valid">
                     Login
                   </button>
                   <hr>

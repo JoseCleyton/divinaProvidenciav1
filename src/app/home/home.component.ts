@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { PedidoService } from '../services/pedido.service';
+import { OrderService } from '../services/order/order.service';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
-import { CaixaService } from '../services/caixa/caixa.service';
-import { EstoqueService } from '../services/estoque/estoque.service';
+import { CashierService } from '../services/cashier/cashier.service';
+import { StockService } from '../services/stock/stock.service';
 import { Product } from '../model/produto';
 import { AccountsReceivable } from '../model/accountsReceivable';
 import { AccountsReceivableService } from '../services/accountsReceivable/accountsReceivable.service';
-import { MovimentacoesCaixaService } from '../services/caixa/movimentacoesCaixa.service'
+import { MovesCashierService } from '../services/cashier/movesCashier.service'
 import { MovimentacoesCaixa } from '../model/movimentacoesCaixa';
 
 @Component({
@@ -17,24 +17,24 @@ import { MovimentacoesCaixa } from '../model/movimentacoesCaixa';
 
 })
 export class HomeComponent implements OnInit {
-  public valorJaneiro: number = 0
-  public valorFevereiro: number = 0
-  public valorMarco: number = 0
-  public valorAbril: number = 0
-  public valorMaio: number = 0
-  public valorJunho: number = 0
-  public valorJulho: number = 0
-  public valorAgosto: number = 0
-  public valorSetembro: number = 0
-  public valorOutubro: number = 0
-  public valorNovembro: number = 0
-  public valorDezembro: number = 0
-  public mostrarGrafico: boolean
+  public januaryValue: number = 0
+  public februaryValue: number = 0
+  public marchValue: number = 0
+  public aprilValue: number = 0
+  public mayValue: number = 0
+  public juneValue: number = 0
+  public julyValue: number = 0
+  public augustValue: number = 0
+  public septemberValue: number = 0
+  public octoberValue: number = 0
+  public novemberValue: number = 0
+  public decemberValue: number = 0
+  public showGraph: boolean
   public load: boolean
-  public valorCaixa = 0
-  public pedidosAtivos = 0
-  public pedidosTotais = 0
-  public produtosTotais = 0
+  public valueCashier = 0
+  public activeOrders = 0
+  public totalOrders = 0
+  public totalProducts = 0
 
   public lineChartData: ChartDataSets[];
   public lineChartLabels: Label[];
@@ -50,65 +50,66 @@ export class HomeComponent implements OnInit {
 
   public lineChartPlugins;
   public accountsReceivable: AccountsReceivable[] = []
-  public abrirCard: boolean = false
+  public openCard: boolean = false
   public accountFinish: AccountsReceivable
-  public mensagem: string
+  public message: string
 
-  constructor(private movimentacoesCaixaService: MovimentacoesCaixaService, private accountsReceivableService: AccountsReceivableService, private pedidoService: PedidoService, private caixaService: CaixaService, private estoqueService: EstoqueService) {
+  constructor(private movesCashierService: MovesCashierService, private accountsReceivableService: AccountsReceivableService,
+    private orderService: OrderService, private cashierService: CashierService, private stockService: StockService) {
   }
 
 
 
   ngOnInit() {
-    this.mostrarGrafico = false
+    this.showGraph = false
     this.load = true
 
     this.getAccounts()
-    this.buscarDadosGrafico()
-    this.getValorCaixa()
-    this.getPedidosAtivos()
-    this.getPedidos()
-    this.getProdutos()
+    this.getDataGraph()
+    this.getValueCashier()
+    this.getActiveOrders()
+    this.getOrders()
+    this.getProducts()
   }
-  private getProdutos() {
-    this.estoqueService.getEstoque().subscribe(
+  private getProducts() {
+    this.stockService.getStock().subscribe(
       (products: Product[]) => {
-        this.produtosTotais = products.length
+        this.totalProducts = products.length
       }
     )
 
   }
-  private getPedidosAtivos() {
+  private getActiveOrders() {
 
-    this.pedidoService.getPedidosAbertos()
+    this.orderService.getOpenOrders()
       .subscribe(
-        (pedidos: any[]) => {
-          this.pedidosAtivos = pedidos.length
+        (orders: any[]) => {
+          this.activeOrders = orders.length
         }
       )
 
   }
-  private getPedidos() {
-    this.pedidoService.getPedidos()
+  private getOrders() {
+    this.orderService.getOrders()
       .subscribe(
-        (pedidos) => { this.pedidosTotais = pedidos.length }
+        (orders) => { this.totalOrders = orders.length }
       )
   }
-  private getValorCaixa() {
-    this.caixaService.getValorCaixa().subscribe(
-      (caixa: any) => {
-        this.valorCaixa = caixa
+  private getValueCashier() {
+    this.cashierService.getCashValue().subscribe(
+      (cashier: any) => {
+        this.valueCashier = cashier
       }
     )
   }
-  private montarGrafico() {
+  private assembleGraph() {
     this.load = false
 
     this.lineChartData2 = [
       {
-        data: [this.valorJaneiro, this.valorFevereiro, this.valorMarco, this.valorAbril,
-        this.valorMaio, this.valorJunho, this.valorJulho, this.valorAgosto, this.valorSetembro
-          , this.valorOutubro, this.valorNovembro, this.valorDezembro], label: 'Valores dos Pedidos'
+        data: [this.januaryValue, this.februaryValue, this.marchValue, this.aprilValue,
+        this.mayValue, this.juneValue, this.julyValue, this.augustValue, this.septemberValue
+          , this.octoberValue, this.novemberValue, this.decemberValue], label: 'Valores dos Pedidos'
       }
     ]
 
@@ -128,9 +129,9 @@ export class HomeComponent implements OnInit {
 
     this.lineChartData = [
       {
-        data: [this.valorJaneiro, this.valorFevereiro, this.valorMarco, this.valorAbril,
-        this.valorMaio, this.valorJunho, this.valorJulho, this.valorAgosto, this.valorSetembro
-          , this.valorOutubro, this.valorNovembro, this.valorDezembro], label: 'Valores dos Pedidos'
+        data: [this.januaryValue, this.februaryValue, this.marchValue, this.aprilValue,
+        this.mayValue, this.juneValue, this.julyValue, this.augustValue, this.septemberValue
+          , this.octoberValue, this.novemberValue, this.decemberValue], label: 'Valores dos Pedidos'
       }
     ]
     this.lineChartLabels = [
@@ -149,157 +150,157 @@ export class HomeComponent implements OnInit {
     this.lineChartType = 'line';
     this.lineChartPlugins = [];
 
-    this.mostrarGrafico = true
+    this.showGraph = true
   }
 
-  private buscarDadosGrafico() {
+  private getDataGraph() {
     this.load = true
-    this.pedidoService.getPedidosMes('1').subscribe(
+    this.orderService.getOrderMonth('1').subscribe(
       (valueOrderMonth: number) => {
-        this.valorJaneiro += valueOrderMonth
+        this.januaryValue += valueOrderMonth
       }
     )
 
-    this.pedidoService.getPedidosMes('2').subscribe(
+    this.orderService.getOrderMonth('2').subscribe(
       (valueOrderMonth: number) => {
-        this.valorFevereiro += valueOrderMonth
+        this.februaryValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('3').subscribe(
+    this.orderService.getOrderMonth('3').subscribe(
       (valueOrderMonth: number) => {
-        this.valorMarco += valueOrderMonth
+        this.marchValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('4').subscribe(
+    this.orderService.getOrderMonth('4').subscribe(
       (valueOrderMonth: number) => {
-        this.valorAbril += valueOrderMonth
+        this.aprilValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('5').subscribe(
+    this.orderService.getOrderMonth('5').subscribe(
       (valueOrderMonth: number) => {
-        this.valorMaio += valueOrderMonth
+        this.mayValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('6').subscribe(
+    this.orderService.getOrderMonth('6').subscribe(
       (valueOrderMonth: number) => {
-        this.valorJunho += valueOrderMonth
+        this.juneValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('7').subscribe(
+    this.orderService.getOrderMonth('7').subscribe(
       (valueOrderMonth: number) => {
-        this.valorJulho += valueOrderMonth
+        this.julyValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('8').subscribe(
+    this.orderService.getOrderMonth('8').subscribe(
       (valueOrderMonth: number) => {
-        this.valorAgosto += valueOrderMonth
+        this.augustValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('9').subscribe(
+    this.orderService.getOrderMonth('9').subscribe(
       (valueOrderMonth: number) => {
-        this.valorSetembro += valueOrderMonth
+        this.septemberValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('10').subscribe(
+    this.orderService.getOrderMonth('10').subscribe(
       (valueOrderMonth: number) => {
-        this.valorOutubro += valueOrderMonth
+        this.octoberValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('11').subscribe(
+    this.orderService.getOrderMonth('11').subscribe(
       (valueOrderMonth: number) => {
-        this.valorNovembro += valueOrderMonth
+        this.novemberValue += valueOrderMonth
       }
     )
-    this.pedidoService.getPedidosMes('12').subscribe(
+    this.orderService.getOrderMonth('12').subscribe(
       (valueOrderMonth: number) => {
-        this.valorDezembro += valueOrderMonth
-        this.montarGrafico()
+        this.decemberValue += valueOrderMonth
+        this.assembleGraph()
       }
     )
   }
-  public fecharCard() {
-    this.abrirCard = false
+  public closeCard() {
+    this.openCard = false
   }
 
-  public receberValor(id: string) {
+  public receiveValue(id: string) {
     this.accountFinish = this.accountsReceivable.find((a: AccountsReceivable) => {
       return a.id === id
     })
   }
-  public finalizarContaAReceber() {
-    this.mensagem = 'Aguarde a operação...'
+  public checkoutAccountsReceivable() {
+    this.message = 'Aguarde a operação...'
 
     this.accountFinish.paidInstallments = this.accountFinish.paidInstallments + 1
 
     if (this.accountFinish.numberInstallments == this.accountFinish.paidInstallments) {
-      let dia = new Date().getDate()
-      let mes = new Date().getMonth() + 1
-      let ano = new Date().getFullYear()
-      let dataAtualizada = dia + '/' + mes + '/' + ano
-      this.accountFinish.dateCheckout = dataAtualizada
+      let day = new Date().getDate()
+      let month = new Date().getMonth() + 1
+      let year = new Date().getFullYear()
+      let updatedDate = day + '/' + month + '/' + year
+      this.accountFinish.dateCheckout = updatedDate
       this.accountFinish.checkout = true
       this.accountsReceivableService.checkOut(this.accountFinish).subscribe(
         () => {
-          this.mensagem = 'Conta finalizada com sucesso !!!'
+          this.message = 'Conta finalizada com sucesso !!!'
           this.getAccounts()
           let valueInstallment = (this.accountFinish.order.orderValue / this.accountFinish.numberInstallments)
-          this.caixaService.inserirValorNoCaixa(valueInstallment).subscribe(
+          this.cashierService.insertvalueInCash(valueInstallment).subscribe(
             () => {
-              this.caixaService.getValorCaixa().subscribe(
-                (caixa: any) => {
-                  this.valorCaixa = caixa
-                  let movimentacao = new MovimentacoesCaixa(this.accountFinish.order.comments, valueInstallment, caixa, 'Inserir')
-                  this.movimentacoesCaixaService.movimentarCaixa(movimentacao)
+              this.cashierService.getCashValue().subscribe(
+                (cashier: any) => {
+                  this.valueCashier = cashier
+                  let moves = new MovimentacoesCaixa(this.accountFinish.order.comments, valueInstallment, cashier, 'Inserir')
+                  this.movesCashierService.movesCashier(moves)
                 }
               )
             }
           ),
-            (erro) => {
-              this.mensagem = erro.error.message
+            (error) => {
+              this.message = error.error.message
             }
         }
       ),
-        (erro) => {
-          this.mensagem = erro.error.message
+        (error) => {
+          this.message = error.error.message
         }
 
     } else {
       this.accountsReceivableService.payInstallments(this.accountFinish).subscribe(
         () => {
-          this.mensagem = 'Parcela paga com sucesso !!!'
+          this.message = 'Parcela paga com sucesso !!!'
           this.getAccounts()
           let valueInstallment = (this.accountFinish.order.orderValue / this.accountFinish.numberInstallments)
-          this.caixaService.inserirValorNoCaixa(valueInstallment).subscribe(
+          this.cashierService.insertvalueInCash(valueInstallment).subscribe(
             () => {
-              this.caixaService.getValorCaixa().subscribe(
-                (caixa: any) => {
-                  this.valorCaixa = caixa
-                  let movimentacao = new MovimentacoesCaixa(this.accountFinish.order.comments, valueInstallment, caixa, 'Inserir')
-                  this.movimentacoesCaixaService.movimentarCaixa(movimentacao)
+              this.cashierService.getCashValue().subscribe(
+                (cashier: any) => {
+                  this.valueCashier = cashier
+                  let moves = new MovimentacoesCaixa(this.accountFinish.order.comments, valueInstallment, cashier, 'Inserir')
+                  this.movesCashierService.movesCashier(moves)
                 }
               )
             }
           ),
-            (erro) => {
-              this.mensagem = erro.error.message
+            (error) => {
+              this.message = error.error.message
             }
         }
       ),
-        (erro) => {
-          this.mensagem = erro.error.message
+        (error) => {
+          this.message = error.error.message
         }
     }
 
   }
-  public limparMensagem() {
-    this.mensagem = ''
+  public clearMessage() {
+    this.message = ''
   }
 
   public getAccounts() {
     this.accountsReceivableService.getAccounts().subscribe(
       (accountsReceivable: AccountsReceivable[]) => {
         this.accountsReceivable = accountsReceivable;
-        this.abrirCard = this.accountsReceivable.length > 0
+        this.openCard = this.accountsReceivable.length > 0
       }
     )
   }

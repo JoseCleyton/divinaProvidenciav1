@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { AutenticacaoLogin } from '../services/autenticacao/autenticacaoLogin.service';
+import { AuthLoginService } from '../services/auth/authLogin.service';
 import { CredentialsDTO } from '../model/credentialsDTO';
 import { Router } from '@angular/router';
 
@@ -10,34 +10,34 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  public carregamentoPagina: boolean = false
-  public erroLogin: string
+  public loadingPage: boolean = false
+  public errorLogin: string
 
-  public formularioLogin: FormGroup = new FormGroup({
+  public formLogin: FormGroup = new FormGroup({
     'login': new FormControl(null, [Validators.email, Validators.required]),
-    'senha': new FormControl(null, [Validators.required]),
+    'password': new FormControl(null, [Validators.required]),
   })
-  constructor(private autenticacaoLogin: AutenticacaoLogin, private router: Router) { }
+  constructor(private authLoginService: AuthLoginService, private router: Router) { }
 
   ngOnInit() { }
 
 
-  public autenticar() {
+  public authenticate() {
 
-    this.carregamentoPagina = true
+    this.loadingPage = true
 
-    this.autenticacaoLogin.autenticarLoginEmailSenha(this.formularioLogin.value.login,
-      this.formularioLogin.value.senha)
+    this.authLoginService.authenticateWithLoginPassword(this.formLogin.value.login,
+      this.formLogin.value.password)
       .subscribe(
         (credentialsDTO: CredentialsDTO) => {
-          this.autenticacaoLogin.insertToken(credentialsDTO.token)
+          this.authLoginService.insertToken(credentialsDTO.token)
           localStorage.setItem('idTokenDivinaProvidencia', credentialsDTO.token)
-          this.router.navigateByUrl('painelDeControle')
-          this.carregamentoPagina = false
+          this.router.navigateByUrl('dashboard')
+          this.loadingPage = false
         }
         , (erro: any) => {
-          this.erroLogin = erro.error.message
-          this.carregamentoPagina = false
+          this.errorLogin = erro.error.message
+          this.loadingPage = false
 
         })
   }

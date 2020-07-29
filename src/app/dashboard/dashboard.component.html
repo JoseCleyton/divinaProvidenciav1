@@ -1,0 +1,103 @@
+<div id="wrapper">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion collapse btn" id="accordionSidebar">
+
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" routerLink="/dashboard">
+            <div class="sidebar-brand-icon ">
+                <img src="../../assets/img/Logo-Divina-Providencia.ico" style="max-width: 70px; max-height: 70px">
+            </div>
+
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/dashboard">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span></a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#orders" aria-expanded="true"
+                aria-controls="orders">
+                <i class="fas fa-paste"></i>
+                <span>Pedidos</span>
+            </a>
+            <div id="orders" class="collapse" aria-labelledby="orders" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="insertOrder">Inserir Pedido</a>
+                    <a class="collapse-item" routerLink="listOpenOrders">Listar Pedidos Abertos</a>
+                    <a class="collapse-item" routerLink="listAllOrders">Listar Todos Pedidos</a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" data-target="#products" aria-expanded="true"
+                aria-controls="products">
+                <i class="fas fa-database"></i>
+                <span>Produtos</span>
+            </a>
+            <div id="products" class="collapse" aria-labelledby="products" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="insertProduct">Inserir Produto</a>
+                    <a class="collapse-item" routerLink="listStok">Listar todo Estoque</a>
+                </div>
+            </div>
+        </li>
+        <hr class="sidebar-divider">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#cashier" aria-expanded="true"
+                aria-controls="cashier">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Caixa</span>
+            </a>
+            <div id="cashier" class="collapse" aria-labelledby="cashier" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="movesCashier">Movimentações</a>
+                </div>
+            </div>
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" routerLink="userManual" data-toggle="collapse">
+                <i class="fas fa-book"></i>
+                <span>Manual do Usuário</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" data-toggle="collapse" data-target="#accordionSidebar"
+                id="sidebarToggle">
+            </button>
+        </div>
+
+    </ul>
+
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <app-top></app-top>
+
+            <router-outlet></router-outlet>
+        </div>
+        <app-footer></app-footer>
+    </div>
+</div>

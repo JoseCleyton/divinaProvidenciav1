@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AutenticacaoLogin } from '../services/autenticacao/autenticacaoLogin.service';
+import { AuthLoginService } from '../services/auth/authLogin.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { User } from '../model/user';
 
 @Component({
   selector: 'app-send-email-forget-password',
@@ -8,23 +9,39 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./send-email-forget-password.component.css']
 })
 export class SendEmailForgetPasswordComponent implements OnInit {
-  public mensagem: string
-  public formularioEnviarEmail: FormGroup = new FormGroup({
+  public message: string
+  public loadingEmail: boolean
+  public formSendEmail: FormGroup = new FormGroup({
     'login': new FormControl(null, [Validators.email, Validators.required])
   })
 
-  constructor(private autenticacaoService: AutenticacaoLogin) { }
+  constructor(private authLoginService: AuthLoginService) { }
 
   ngOnInit() {
   }
 
-  public recuperarSenha() {
-    this.mensagem = 'Solicitação recebida! Caso esse e-mail esteja em nossa base de dados, você irá receber as instruções para recuperação da senha...'
-    this.autenticacaoService.recuperarSenha(this.formularioEnviarEmail.value.login)
+  public recoverPassword() {
+    this.loadingEmail = true
+    this.message = 'Aguarde, estamos processando sua solicitação...';
+    let login = this.formSendEmail.value.login
+    let user: User = new User(login, '')
+
+    this.authLoginService.recoverPassword(user).subscribe(
+      () => {
+        this.message = 'Solicitação recebida! Caso esse e-mail esteja em nossa base de dados, você irá receber as instruções para recuperação da senha...'
+        this.loadingEmail = false
+      }
+      ,
+      () => {
+        this.message = 'Erro na solicitação. Tente novamente mais tarde!'
+        this.loadingEmail = false
+      }
+    )
+
   }
 
-  public limparMensagem() {
-    this.formularioEnviarEmail.reset();
-    this.mensagem = '';
+  public clearMessage() {
+    this.formSendEmail.reset();
+    this.message = '';
   }
 }
